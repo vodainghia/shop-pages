@@ -14,12 +14,12 @@ public class UserRequest {
 
     private Long id;
 
-    @NotEmpty
+    @NotEmpty(message = "Name should not be empty")
     private String name;
 
-
+    @NotEmpty(message = "Email should not be empty")
     private String email;
 
-
+    @NotEmpty(message = "Password should not be empty")
     private String password;
 }
