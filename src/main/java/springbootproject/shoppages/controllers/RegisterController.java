@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import jakarta.validation.Valid;
 import springbootproject.shoppages.contract.services.UserServiceInterface;
+import springbootproject.shoppages.models.User;
 import springbootproject.shoppages.requests.UserRequest;
 
 @Controller
@@ -34,13 +35,19 @@ public class RegisterController {
             BindingResult result,
             Model model) {
 
+        User checkExistedEmail = this.userService.findByEmail(userRequest.getEmail());
+
+        if (checkExistedEmail != null) {
+            result.rejectValue("email", "409", "This email is already registed.");
+        }
+
         if (result.hasErrors()) {
             model.addAttribute("user", userRequest);
-            return "register";
+            return "authentication/register";
         }
 
         this.userService.saveUser(userRequest);
 
-        return "redirect:/login";
+        return "redirect:/register?success";
     }
 }
