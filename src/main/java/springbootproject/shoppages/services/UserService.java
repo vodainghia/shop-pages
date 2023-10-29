@@ -1,6 +1,8 @@
 package springbootproject.shoppages.services;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -56,5 +58,21 @@ public class UserService implements UserServiceInterface {
     @Override
     public User findByEmail(String email) {
         return this.userRepo.findByEmail(email);
+    }
+
+    @Override
+    public List<UserRequest> getUsersDataList() {
+        List<User> users = this.userRepo.findAll();
+        return users.stream().map(user -> convertUsers(user))
+                .collect(Collectors.toList());
+    }
+
+    private UserRequest convertUsers(User user) {
+        UserRequest users = new UserRequest();
+        users.setId(user.getId());
+        users.setName(user.getName());
+        users.setEmail(user.getEmail());
+
+        return users;
     }
 }

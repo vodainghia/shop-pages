@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>AdminLTE 3 | Dashboard 2</title>
+    <!-- overlayScrollbars -->
+    <link rel="stylesheet" th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+
+    <span th:replace="~{layouts/head :: head}"></span>
+</head>
+
+<body class="hold-transition dark-mode sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+    <div class="wrapper">
+
+        <!-- Preloader -->
+        <div class="preloader flex-column justify-content-center align-items-center">
+            <img class="animation__wobble" th:src="@{/dist/img/AdminLTELogo.png}" alt="AdminLTELogo" height="60"
+                width="60">
+        </div>
+
+        <!-- Navbar -->
+        <span th:replace="~{layouts/header :: header}"></span>
+        <!-- /.navbar -->
+
+        <!-- Main Sidebar Container -->
+        <span th:replace="~{layouts/sidebar :: sidebar}"></span>
+
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+            <section class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h1>Danh sách Users</h1>
+                        </div>
+                        <div class="col-sm-6">
+                            <ol class="breadcrumb float-sm-right">
+                                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                <li class="breadcrumb-item active">Danh sách Users</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.container-fluid -->
+            </section>
+
+            <!-- Main content -->
+            <section class="content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <!-- left column -->
+                        <div class="col-md-12">
+                            <!-- general form elements -->
+                            <div class="card card-primary">
+                                <div class="card-header">
+                                    <h3 class="card-title">Create User</h3>
+                                    <div th:if="${param.success}" class="alert alert-success">Create new user
+                                        successfully</div>
+                                </div>
+                                <!-- /.card-header -->
+                                <!-- form start -->
+                                <form role="form" th:action="@{/users/save}" th:object="${user}" method="post">
+                                    <div class="card-body">
+                                        <div class="form-group">
+                                            <label for="name">Name</label>
+                                            <input type="text" class="form-control" id="name" placeholder="Enter name"
+                                                th:field="*{name}">
+                                        </div>
+                                        <p th:errors="*{name}" style="color: red;" th:if="${#fields.hasErrors('name')}">
+                                            Name is empty</p>
+
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">Email address</label>
+                                            <input type="email" class="form-control" id="exampleInputEmail1"
+                                                placeholder="Enter email" th:field="*{email}">
+                                        </div>
+                                        <p th:errors="*{email}" style="color: red;"
+                                            th:if="${#fields.hasErrors('email')}">Email is empty</p>
+
+                                        <div class="form-group">
+                                            <label for="password">Password</label>
+                                            <input type="password" class="form-control" id="password"
+                                                placeholder="Password" th:field="*{password}">
+                                        </div>
+                                        <p th:errors="*{password}" style="color: red;"
+                                            th:if="${#fields.hasErrors('password')}">Password is empty</p>
+
+                                        <div class="form-group">
+                                            <label for="ConfirmPassword">Confirm Password</label>
+                                            <input type="password" class="form-control" id="ConfirmPassword"
+                                                placeholder="Confirm Password" th:field="*{confirmPassword}">
+                                        </div>
+                                        <p th:errors="*{confirmPassword}" style="color: red;"
+                                            th:if="${#fields.hasErrors('confirmPassword')}">Password is empty</p>
+                                        <!-- <p id="errMsgConfirmPassword" style="color: red; display: none;">Your confirmed
+                                            password should be identical to your original password.</p> -->
+                                    </div>
+                                    <!-- /.card-body -->
+
+                                    <div class="card-footer">
+                                        <button id="btnSubmit" type="submit" class="btn btn-primary">Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- /.card -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <!-- Control Sidebar -->
+        <aside class="control-sidebar control-sidebar-dark">
+            <!-- Control sidebar content goes here -->
+        </aside>
+        <!-- /.control-sidebar -->
+
+        <!-- Main Footer -->
+        <span th:replace="~{layouts/footer :: footer}"></span>
+    </div>
+    <!-- ./wrapper -->
+
+    <!-- REQUIRED SCRIPTS -->
+    <span th:replace="~{layouts/script :: script}"></span>
+</body>
+<!-- overlayScrollbars -->
+<script th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+<!-- PAGE PLUGINS -->
+<!-- jQuery Mapael -->
+<script th:src="@{/plugins/jquery-mousewheel/jquery.mousewheel.js}"></script>
+<script th:src="@{/plugins/raphael/raphael.min.js}"></script>
+<script th:src="@{/plugins/jquery-mapael/jquery.mapael.min.js}"></script>
+<script th:src="@{/plugins/jquery-mapael/maps/usa_states.min.js}"></script>
+<!-- ChartJS -->
+<script th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+<script th:src="@{/dist/js/pages/dashboard2.js}"></script>
+
+<!-- <script>
+    $(document).ready(function () {
+        const password = document.getElementById("password");
+        const confirmPassword = document.getElementById("confirmPassword");
+        const errMsgConfirmPassword = document.getElementById("errMsgConfirmPassword");
+        const btnSubmit = document.getElementById("btnSubmit");
+
+        function validateConfirmPassword() {
+            if (password && confirmPassword && password.value !== confirmPassword.value) {
+                errMsgConfirmPassword.style.display = "block";
+                btnSubmit.setAttribute("disabled", "disabled");
+            } else {
+                errMsgConfirmPassword.style.display = "none";
+                btnSubmit.removeAttribute("disabled");
+            }
+        }
+
+        password.oninput = validateConfirmPassword;
+        confirmPassword.oninput = validateConfirmPassword; 
+
+
+        // $.ajax({
+        //     url: "/users/save",
+        //     type: "POST",
+        //     data: "Dữ liệu gửi đi",
+        //     success: function (response) {
+        //         // Xử lý phản hồi từ server tại đây
+        //         console.log(response);
+        //     }
+        // });
+    });
+</script>-->
+
+</html>

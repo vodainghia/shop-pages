@@ -30,14 +30,15 @@ public class SpringSecurity {
                         .requestMatchers("/build/**").permitAll()
                         .requestMatchers("/dist/**").permitAll()
                         .requestMatchers("/plugins/**").permitAll()
-                        .requestMatchers("/dashboard").hasRole("ADMIN"))
-                .formLogin(form -> form.loginPage("/login")
+                        .requestMatchers("/dashboard").hasRole("ADMIN")
+                        .requestMatchers("/users/**").hasRole("ADMIN")
+                ).formLogin(form -> form.loginPage("/login")
                         .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/dashboard")
-                        .permitAll())
-                .logout(logout -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                        .permitAll())
-                .build();
+                        .permitAll()
+                ).logout(logout -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                        .permitAll()
+                ).build();
     }
 
     @Autowired

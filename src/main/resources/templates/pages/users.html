@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>AdminLTE 3 | Dashboard 2</title>
+    <!-- overlayScrollbars -->
+    <link rel="stylesheet" th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+
+    <span th:replace="~{layouts/head :: head}"></span>
+</head>
+
+<body class="hold-transition dark-mode sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+    <div class="wrapper">
+
+        <!-- Preloader -->
+        <div class="preloader flex-column justify-content-center align-items-center">
+            <img class="animation__wobble" th:src="@{/dist/img/AdminLTELogo.png}" alt="AdminLTELogo" height="60"
+                width="60">
+        </div>
+
+        <!-- Navbar -->
+        <span th:replace="~{layouts/header :: header}"></span>
+        <!-- /.navbar -->
+
+        <!-- Main Sidebar Container -->
+        <span th:replace="~{layouts/sidebar :: sidebar}"></span>
+
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+            <section class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h1>Danh sách Users</h1>
+                        </div>
+                        <div class="col-sm-6">
+                            <ol class="breadcrumb float-sm-right">
+                                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                <li class="breadcrumb-item active">Danh sách Users</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.container-fluid -->
+            </section>
+
+            <!-- Main content -->
+            <section class="content">
+                <div class="container-fluid">
+                    <!-- /.row -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">
+                                        <a class="btn btn-app" th:href="@{/users/create}">
+                                            <i class="fas fa-plus"></i> Thêm mới
+                                        </a>
+                                    </h3>
+
+                                    <div class="card-tools">
+                                        <div class="input-group input-group-sm" style="width: 150px;">
+                                            <input type="text" name="table_search" class="form-control float-right"
+                                                placeholder="Search">
+
+                                            <div class="input-group-append">
+                                                <button type="submit" class="btn btn-default"><i
+                                                        class="fas fa-search"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /.card-header -->
+                                <div class="card-body table-responsive p-0">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Fullname</th>
+                                                <th>Email</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="user: ${users}">
+                                                <td th:text="${user.id}"></td>
+                                                <td th:text="${user.name}"></td>
+                                                <td th:text="${user.email}"></td>
+                                                <td>
+                                                    <a class="btn btn-app" th:href="@{/users/edit}">
+                                                        <i class="fas fa-edit"></i> Edit
+                                                    </a>
+
+                                                    <a class="btn btn-app">
+                                                        <i class="fas fa-trash"></i> Delete
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- /.card-body -->
+                            </div>
+                            <!-- /.card -->
+                        </div>
+                    </div>
+                    <!-- /.row -->
+                </div>
+            </section>
+        </div>
+        <!-- Control Sidebar -->
+        <aside class="control-sidebar control-sidebar-dark">
+            <!-- Control sidebar content goes here -->
+        </aside>
+        <!-- /.control-sidebar -->
+
+        <!-- Main Footer -->
+        <span th:replace="~{layouts/footer :: footer}"></span>
+    </div>
+    <!-- ./wrapper -->
+
+    <!-- REQUIRED SCRIPTS -->
+    <span th:replace="~{layouts/script :: script}"></span>
+</body>
+<!-- overlayScrollbars -->
+<script th:src="@{plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+<!-- PAGE PLUGINS -->
+<!-- jQuery Mapael -->
+<script th:src="@{plugins/jquery-mousewheel/jquery.mousewheel.js}"></script>
+<script th:src="@{plugins/raphael/raphael.min.js}"></script>
+<script th:src="@{plugins/jquery-mapael/jquery.mapael.min.js}"></script>
+<script th:src="@{plugins/jquery-mapael/maps/usa_states.min.js}"></script>
+<!-- ChartJS -->
+<script th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+<script th:src="@{/dist/js/pages/dashboard2.js}"></script>
+
+</html>

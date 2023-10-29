@@ -24,4 +24,7 @@ public class UserRequest {
 
     @NotEmpty(message = "Password should not be empty")
     private String password;
+
+    @NotEmpty(message = "Confirm Password should not be empty")
+    private String confirmPassword;
 }
