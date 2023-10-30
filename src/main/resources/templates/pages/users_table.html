@@ -1,0 +1,26 @@
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Fullname</th>
+            <th>Email</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="user: ${users}">
+            <td th:text="${user.id}"></td>
+            <td th:text="${user.name}"></td>
+            <td th:text="${user.email}"></td>
+            <td>
+                <a class="btn btn-app" th:href="@{/users/edit}">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
+
+                <a class="btn btn-app">
+                    <i class="fas fa-trash"></i> Delete
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>

@@ -54,9 +54,10 @@
                             <div class="card">
                                 <div class="card-header">
                                     <h3 class="card-title">
-                                        <a class="btn btn-app" th:href="@{/users/create}">
-                                            <i class="fas fa-plus"></i> Thêm mới
-                                        </a>
+                                        <button type="button" class="btn btn-default" data-toggle="modal"
+                                            data-target="#modal-default">
+                                            Thêm mới
+                                        </button>
                                     </h3>
 
                                     <div class="card-tools">
@@ -73,32 +74,9 @@
                                 </div>
                                 <!-- /.card-header -->
                                 <div class="card-body table-responsive p-0">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>ID</th>
-                                                <th>Fullname</th>
-                                                <th>Email</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr th:each="user: ${users}">
-                                                <td th:text="${user.id}"></td>
-                                                <td th:text="${user.name}"></td>
-                                                <td th:text="${user.email}"></td>
-                                                <td>
-                                                    <a class="btn btn-app" th:href="@{/users/edit}">
-                                                        <i class="fas fa-edit"></i> Edit
-                                                    </a>
+                                    <div id="user_table">
 
-                                                    <a class="btn btn-app">
-                                                        <i class="fas fa-trash"></i> Delete
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                    </div>
                                 </div>
                                 <!-- /.card-body -->
                             </div>
@@ -119,10 +97,11 @@
         <span th:replace="~{layouts/footer :: footer}"></span>
     </div>
     <!-- ./wrapper -->
-
-    <!-- REQUIRED SCRIPTS -->
-    <span th:replace="~{layouts/script :: script}"></span>
+    <div th:replace="~{pages/modals/users/create_users_ajax :: create_users_ajax}"></div>
 </body>
+<!-- REQUIRED SCRIPTS -->
+<span th:replace="~{layouts/script :: script}"></span>
+
 <!-- overlayScrollbars -->
 <script th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
 <!-- PAGE PLUGINS -->
@@ -135,5 +114,48 @@
 <script th:src="@{/plugins/chart.js/Chart.min.js}"></script>
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
 <script th:src="@{/dist/js/pages/dashboard2.js}"></script>
+
+<script>
+    $(function () {
+        loadUserData();
+
+        $('#modal-default form').on('submit', function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: "post",
+                url: "/users-ajax/save",
+                data: $(this).serialize(),
+                success: function (data) {
+                    $('#modal-default').modal('hide');
+                    $('.error-message').text('');
+
+                    loadUserData();  
+                },
+
+                error: function (jqXHR, textStatus, err) {
+                    var errors = jqXHR.responseJSON;
+
+                    $('.error-message').text('');
+
+                    for (var field in errors) {
+                        $('#' + field + '-error').text(errors[field]);
+                    }
+                }
+            })
+        });
+    });
+
+    let loadUserData = function () {
+        $.ajax({
+            url: "/users-ajax/list-data",
+            method: "POST",
+            dataType: "HTML",
+            success: function (data) {
+                $('#user_table').html(data);
+            }
+        });
+    }
+
+</script>
 
 </html>
