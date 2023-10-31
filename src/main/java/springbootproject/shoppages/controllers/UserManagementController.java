@@ -40,37 +40,6 @@ public class UserManagementController {
         return "pages/forms/users/create_users";
     }
 
-    // @PostMapping("/users/save")
-    // public String save(
-    // @Valid @ModelAttribute("user") UserRequest userRequest,
-    // BindingResult result,
-    // Model model,
-    // HttpServletResponse response) throws IOException {
-
-    // User checkExistedEmail =
-    // this.userService.findByEmail(userRequest.getEmail());
-
-    // if (checkExistedEmail != null) {
-    // result.rejectValue("email", "409", "This email is already registed.");
-    // }
-
-    // if (!userRequest.getPassword().equals(userRequest.getConfirmPassword())) {
-    // result.rejectValue("confirmPassword", "400",
-    // "Your confirmed password should be identical to your original password.");
-    // }
-
-    // if (result.hasErrors()) {
-    // model.addAttribute("user", userRequest);
-    // response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad request!");
-
-    // return "pages/forms/users/create_users";
-    // }
-
-    // this.userService.saveUser(userRequest);
-
-    // return "redirect:/users?success";
-    // }
-
     @PostMapping("/users/save")
     public String save(
             @Valid @ModelAttribute("user") UserRequest userRequest,
@@ -83,13 +52,13 @@ public class UserManagementController {
         if (checkExistedEmail != null) {
             result.rejectValue("email", "409", "This email is already registered.");
             redirectAttributes.addFlashAttribute("error", "This email is already registered.");
-            response.setStatus(HttpServletResponse.SC_CONFLICT); // Set HTTP 409 Conflict status
+            response.setStatus(HttpServletResponse.SC_CONFLICT);
         }
 
         if (!userRequest.getPassword().equals(userRequest.getConfirmPassword())) {
-            result.rejectValue("confirmPassword", "400", "Password mismatch.");
-            redirectAttributes.addFlashAttribute("error", "Password mismatch.");
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // Set HTTP 400 Bad Request status
+            result.rejectValue("confirmPassword", "400", "Your confirmed password should be identical to your original password.");
+            redirectAttributes.addFlashAttribute("error", "Your confirmed password should be identical to your original password.");
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
 
         if (result.hasErrors()) {
@@ -98,7 +67,7 @@ public class UserManagementController {
 
         this.userService.saveUser(userRequest);
         redirectAttributes.addFlashAttribute("success", "User saved successfully.");
-        response.setStatus(HttpServletResponse.SC_CREATED); // Set HTTP 201 Created status
+        response.setStatus(HttpServletResponse.SC_CREATED);
 
         return "redirect:/users?success";
     }

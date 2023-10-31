@@ -172,31 +172,4 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 
-//     @DeleteMapping("/users-ajax/delete")
-// public ResponseEntity<Map<String, String>> delete(
-//         @RequestParam("email") String email,
-//         HttpServletResponse response) {
-
-//     System.out.println("Nghia1: " + email);
-
-//     Map<String, String> errors = new HashMap<>();
-//     User checkExistedEmail = this.userService.findByEmail(email);
-
-//     if (checkExistedEmail == null) {
-//         errors.put("delete-email", "This email is not existing.");
-//         response.setStatus(HttpServletResponse.SC_CONFLICT);
-//     }
-
-//     if (!errors.isEmpty()) {
-//         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
-//     }
-
-//     UserRequest userRequest = new UserRequest();
-//     userRequest.setEmail(email);
-//     this.userService.deleteUser(userRequest);
-
-//     return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-// }
-
-
 }
