@@ -1,4 +1,4 @@
-<div class="modal fade" id="modal-default" th:fragment="create_users_ajax">
+<div class="modal fade" id="modal-create" th:fragment="create_users_ajax">
     <form role="form" th:action="@{/users-ajax/save}" th:object="${user}" method="post">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -12,28 +12,28 @@
                     <div class="card-body">
                         <div class="form-group">
                             <label for="name">Name</label>
-                            <input type="text" class="form-control" id="name" placeholder="Enter name"
+                            <input type="text" class="form-control" placeholder="Enter name"
                                 th:field="*{name}">
                         </div>
                         <p id="name-error" class="error-message" style="color: red;"></p>
 
                         <div class="form-group">
-                            <label for="exampleInputEmail1">Email address</label>
-                            <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email"
+                            <label for="email">Email address</label>
+                            <input type="email" class="form-control" placeholder="Enter email"
                                 th:field="*{email}">
                         </div>
                         <p id="email-error" class="error-message" style="color: red;"></p>
 
                         <div class="form-group">
                             <label for="password">Password</label>
-                            <input type="password" class="form-control" id="password" placeholder="Password"
+                            <input type="password" class="form-control" placeholder="Password"
                                 th:field="*{password}">
                         </div>
                         <p id="password-error" class="error-message" style="color: red;"></p>
 
                         <div class="form-group">
                             <label for="ConfirmPassword">Confirm Password</label>
-                            <input type="password" class="form-control" id="ConfirmPassword"
+                            <input type="password" class="form-control"
                                 placeholder="Confirm Password" th:field="*{confirmPassword}">
                         </div>
                         <p id="confirmPassword-error" class="error-message" style="color: red;"></p>

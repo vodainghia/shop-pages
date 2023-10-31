@@ -22,6 +22,9 @@ public class UserRequest {
     @Email
     private String email;
 
+    @Email
+    private String targetEmail;
+
     @NotEmpty(message = "Password should not be empty")
     private String password;
 

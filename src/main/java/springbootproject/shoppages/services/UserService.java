@@ -1,6 +1,6 @@
 package springbootproject.shoppages.services;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,14 +38,39 @@ public class UserService implements UserServiceInterface {
         String pw = this.passwordEncoder.encode(userRequest.getPassword());
         user.setPassword(pw);
 
-        Role role = this.roleRepo.findByName("ROLE_ADMIN");
+        Role adminRole = this.roleRepo.findByName("ROLE_ADMIN");
 
-        if (role == null) {
-            role = saveRole();
+        if (adminRole == null) {
+            adminRole = saveRole();
         }
 
-        user.setRoles(Arrays.asList(role));
+        List<Role> userRoles = new ArrayList<>();
+        userRoles.add(adminRole);
+        
+        user.setRoles(userRoles);
+
         this.userRepo.save(user);
+    }
+
+    @Override
+    public void updateUser(UserRequest userRequest) {
+        User targetUser = findByEmail(userRequest.getTargetEmail());
+
+        targetUser.setName(userRequest.getName());
+        targetUser.setEmail(userRequest.getEmail());
+
+        String pw = this.passwordEncoder.encode(userRequest.getPassword());
+        targetUser.setPassword(pw);
+
+        this.userRepo.save(targetUser);
+    }
+
+    @Override
+    public void deleteUser(UserRequest userRequest) {
+        User user = this.userRepo.findByEmail(userRequest.getEmail());
+
+        user.getRoles().clear();
+        this.userRepo.delete(user);
     }
 
     private Role saveRole() {

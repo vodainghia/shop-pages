@@ -64,7 +64,7 @@
                                     <div class="card-body">
                                         <div class="form-group">
                                             <label for="name">Name</label>
-                                            <input type="text" class="form-control" id="name" placeholder="Enter name"
+                                            <input type="text" class="form-control" placeholder="Enter name"
                                                 th:field="*{name}">
                                         </div>
                                         <p th:errors="*{name}" style="color: red;" th:if="${#fields.hasErrors('name')}">
@@ -72,7 +72,7 @@
 
                                         <div class="form-group">
                                             <label for="exampleInputEmail1">Email address</label>
-                                            <input type="email" class="form-control" id="exampleInputEmail1"
+                                            <input type="email" class="form-control"
                                                 placeholder="Enter email" th:field="*{email}">
                                         </div>
                                         <p th:errors="*{email}" style="color: red;"
@@ -80,7 +80,7 @@
 
                                         <div class="form-group">
                                             <label for="password">Password</label>
-                                            <input type="password" class="form-control" id="password"
+                                            <input type="password" class="form-control"
                                                 placeholder="Password" th:field="*{password}">
                                         </div>
                                         <p th:errors="*{password}" style="color: red;"
@@ -88,7 +88,7 @@
 
                                         <div class="form-group">
                                             <label for="ConfirmPassword">Confirm Password</label>
-                                            <input type="password" class="form-control" id="ConfirmPassword"
+                                            <input type="password" class="form-control"
                                                 placeholder="Confirm Password" th:field="*{confirmPassword}">
                                         </div>
                                         <p th:errors="*{confirmPassword}" style="color: red;"

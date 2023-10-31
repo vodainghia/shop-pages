@@ -1,6 +1,6 @@
 <table class="table table-hover">
     <thead>
-        <tr>
+        <tr class="justify-content-between">
             <th>ID</th>
             <th>Fullname</th>
             <th>Email</th>
@@ -13,11 +13,10 @@
             <td th:text="${user.name}"></td>
             <td th:text="${user.email}"></td>
             <td>
-                <a class="btn btn-app" th:href="@{/users/edit}">
+                <a class="btn btn-app editBtn" data-toggle="modal" data-target="#modal-update" onclick="editBtnClick(this)">
                     <i class="fas fa-edit"></i> Edit
                 </a>
-
-                <a class="btn btn-app">
+                <a class="btn btn-app deleteBtn" data-toggle="modal" data-target="#modal-delete" onclick="deleteBtnClick(this)">
                     <i class="fas fa-trash"></i> Delete
                 </a>
             </td>

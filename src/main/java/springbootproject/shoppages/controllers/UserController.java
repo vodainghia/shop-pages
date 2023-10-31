@@ -9,9 +9,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -94,5 +97,106 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(null);
     }
+
+    @PutMapping("/users-ajax/update")
+    public ResponseEntity<Map<String, String>> update(
+            @Valid @ModelAttribute("user") UserRequest userRequest,
+            BindingResult result,
+            RedirectAttributes redirectAttributes,
+            HttpServletResponse response) {
+
+        String userName = userRequest.getName();
+        String userEmail = userRequest.getEmail();
+        String userPassword = userRequest.getPassword();
+        String userConfirmPassword = userRequest.getConfirmPassword();
+
+        Map<String, String> errors = new HashMap<>();
+        User checkExistedEmail = this.userService.findByEmail(userEmail);
+
+        if (checkExistedEmail != null) {
+            errors.put("update-email", "This email is already registered.");
+            response.setStatus(HttpServletResponse.SC_CONFLICT);
+        }
+
+        if (userPassword != null && userConfirmPassword != null && !userPassword.equals(userConfirmPassword)) {
+            errors.put("update-confirmPassword", "Your confirmed password should be identical to your original password.");
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        }
+
+        if (userName == null || userName.isEmpty()) {
+            errors.put("update-name", "Name is empty");
+        }
+
+        if (userEmail == null || userEmail.isEmpty()) {
+            errors.put("update-email", "Email is empty");
+        }
+
+        if (userPassword == null || userPassword.isEmpty()) {
+            errors.put("update-password", "Password is empty");
+        }
+
+        if (userConfirmPassword == null || userConfirmPassword.isEmpty()) {
+            errors.put("update-confirmPassword", "Confirm Password is empty");
+        }
+
+        if (result.hasErrors() || !errors.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+        }
+
+        this.userService.updateUser(userRequest);
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
+    }
+
+    @DeleteMapping("/users-ajax/delete")
+    public ResponseEntity<Map<String, String>> delete(
+            @RequestParam("email") String email,
+            HttpServletResponse response) {
+
+        Map<String, String> errors = new HashMap<>();
+        User checkExistedEmail = this.userService.findByEmail(email);
+
+        if (checkExistedEmail == null) {
+            errors.put("delete-email", "This email is not existing.");
+            response.setStatus(HttpServletResponse.SC_CONFLICT);
+        }
+
+        if (!errors.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+        }
+
+        UserRequest userRequest = new UserRequest();
+        userRequest.setEmail(email);
+        this.userService.deleteUser(userRequest);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+    }
+
+//     @DeleteMapping("/users-ajax/delete")
+// public ResponseEntity<Map<String, String>> delete(
+//         @RequestParam("email") String email,
+//         HttpServletResponse response) {
+
+//     System.out.println("Nghia1: " + email);
+
+//     Map<String, String> errors = new HashMap<>();
+//     User checkExistedEmail = this.userService.findByEmail(email);
+
+//     if (checkExistedEmail == null) {
+//         errors.put("delete-email", "This email is not existing.");
+//         response.setStatus(HttpServletResponse.SC_CONFLICT);
+//     }
+
+//     if (!errors.isEmpty()) {
+//         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+//     }
+
+//     UserRequest userRequest = new UserRequest();
+//     userRequest.setEmail(email);
+//     this.userService.deleteUser(userRequest);
+
+//     return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+// }
+
 
 }

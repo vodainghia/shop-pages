@@ -11,4 +11,8 @@ public interface UserServiceInterface {
     User findByEmail(String email);
 
     List<UserRequest> getUsersDataList();
+
+    void updateUser(UserRequest userRequest);
+
+    void deleteUser(UserRequest userRequest);
 }

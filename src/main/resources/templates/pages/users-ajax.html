@@ -55,7 +55,7 @@
                                 <div class="card-header">
                                     <h3 class="card-title">
                                         <button type="button" class="btn btn-default" data-toggle="modal"
-                                            data-target="#modal-default">
+                                            data-target="#modal-create">
                                             Thêm mới
                                         </button>
                                     </h3>
@@ -97,7 +97,16 @@
         <span th:replace="~{layouts/footer :: footer}"></span>
     </div>
     <!-- ./wrapper -->
+
+    <!-- Create user modal -->
     <div th:replace="~{pages/modals/users/create_users_ajax :: create_users_ajax}"></div>
+
+    <!-- Update user modal -->
+    <div th:replace="~{pages/modals/users/update_users_ajax :: update_users_ajax}"></div>
+
+    <!-- Delete user modal -->
+    <div th:replace="~{pages/modals/users/delete_users_ajax :: delete_users_ajax}"></div>
+
 </body>
 <!-- REQUIRED SCRIPTS -->
 <span th:replace="~{layouts/script :: script}"></span>
@@ -113,31 +122,30 @@
 <!-- ChartJS -->
 <script th:src="@{/plugins/chart.js/Chart.min.js}"></script>
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-<script th:src="@{/dist/js/pages/dashboard2.js}"></script>
+<!-- <script th:src="@{/dist/js/pages/dashboard2.js}"></script> -->
 
 <script>
     $(function () {
-        loadUserData();
+        loadListUsersData();
 
-        $('#modal-default form').on('submit', function (e) {
+        $('#modal-create form').on('submit', function (e) {
             e.preventDefault();
             $.ajax({
-                type: "post",
+                type: "POST",
                 url: "/users-ajax/save",
                 data: $(this).serialize(),
-                success: function (data) {
-                    $('#modal-default').modal('hide');
-                    $('.error-message').text('');
 
-                    loadUserData();  
+                success: function (data) {
+                    $('#modal-create').modal('hide');
+                    $('.error-message').text('');
+                    loadListUsersData();
                 },
 
                 error: function (jqXHR, textStatus, err) {
-                    var errors = jqXHR.responseJSON;
-
+                    let errors = jqXHR.responseJSON;
                     $('.error-message').text('');
 
-                    for (var field in errors) {
+                    for (let field in errors) {
                         $('#' + field + '-error').text(errors[field]);
                     }
                 }
@@ -145,16 +153,88 @@
         });
     });
 
-    let loadUserData = function () {
+    $('#modal-update form').on('submit', function (e) {
+        e.preventDefault();
+        $.ajax({
+            type: "PUT",
+            url: "/users-ajax/update",
+            data: $(this).serialize(),
+
+            success: function (data) {
+                $('#modal-update').modal('hide');
+                $('.error-message').text('');
+                loadListUsersData();
+            },
+
+            error: function (jqXHR, textStatus, err) {
+                let errors = jqXHR.responseJSON;
+                $('.error-message').text('');
+
+                for (let field in errors) {
+                    $('#' + field + '-error').text(errors[field]);
+                }
+            }
+        })
+    });
+
+    $('#modal-delete form').on('submit', function (e) {
+        e.preventDefault();
+        let deleteEmail = $("#delete-email").val();
+
+        $.ajax({
+            url: "/users-ajax/delete",
+            type: "DELETE",
+            data: { email: deleteEmail },
+
+            success: function (data) {
+                $('#modal-delete').modal('hide');
+                $('.error-message').text('');
+                loadListUsersData();
+            },
+
+            error: function (jqXHR, textStatus, err) {
+                let errors = jqXHR.responseJSON;
+                $('.error-message').text('');
+
+                for (let field in errors) {
+                    $('#' + field + '-error').text(errors[field]);
+                }
+            }
+        });
+    });
+
+    function editBtnClick(button) {
+        const targetRow = $(button).closest('tr');
+        const targetFullname = targetRow.find('td:nth-child(2)').text();
+        const targetEmail = targetRow.find('td:nth-child(3)').text();
+
+        $('#update-name').val(targetFullname);
+        $('#update-email').val(targetEmail);
+        $('#targetEmail').val(targetEmail);
+        $('#update-password').val('');
+        $('#update-confirmPassword').val('');
+    }
+
+    function deleteBtnClick(button) {
+        const targetRow = $(button).closest('tr');
+        const deleteEmail = targetRow.find('td:nth-child(3)').text();
+
+        $('#delete-email').val(deleteEmail);
+        $('#delete-email-display').text(deleteEmail);
+    }
+
+    let loadListUsersData = function () {
         $.ajax({
             url: "/users-ajax/list-data",
             method: "POST",
             dataType: "HTML",
+
             success: function (data) {
                 $('#user_table').html(data);
             }
         });
     }
+
 
 </script>
 
