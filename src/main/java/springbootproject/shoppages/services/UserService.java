@@ -21,8 +21,11 @@ public class UserService implements UserServiceInterface {
     protected RoleRepositoryInterface roleRepo;
     protected PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepositoryInterface userRepo, RoleRepositoryInterface roleRepo,
+    public UserService(
+            UserRepositoryInterface userRepo,
+            RoleRepositoryInterface roleRepo,
             PasswordEncoder passwordEncoder) {
+
         this.userRepo = userRepo;
         this.roleRepo = roleRepo;
         this.passwordEncoder = passwordEncoder;
@@ -46,7 +49,7 @@ public class UserService implements UserServiceInterface {
 
         List<Role> userRoles = new ArrayList<>();
         userRoles.add(adminRole);
-        
+
         user.setRoles(userRoles);
 
         this.userRepo.save(user);
@@ -57,7 +60,10 @@ public class UserService implements UserServiceInterface {
         User targetUser = findByEmail(userRequest.getTargetEmail());
 
         targetUser.setName(userRequest.getName());
-        targetUser.setEmail(userRequest.getEmail());
+
+        if (!userRequest.getEmail().equals(targetUser.getEmail())) {
+            targetUser.setEmail(userRequest.getEmail());
+        }
 
         String pw = this.passwordEncoder.encode(userRequest.getPassword());
         targetUser.setPassword(pw);

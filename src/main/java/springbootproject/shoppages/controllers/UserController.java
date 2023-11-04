@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -51,11 +52,10 @@ public class UserController {
     @PostMapping("/users-ajax/save")
     public ResponseEntity<Map<String, String>> save(
             @Valid @ModelAttribute("user") UserRequest userRequest,
-            BindingResult result,
+            BindingResult bindingResult,
             RedirectAttributes redirectAttributes,
             HttpServletResponse response) {
 
-        String userName = userRequest.getName();
         String userEmail = userRequest.getEmail();
         String userPassword = userRequest.getPassword();
         String userConfirmPassword = userRequest.getConfirmPassword();
@@ -73,27 +73,19 @@ public class UserController {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
 
-        if (userName == null || userName.isEmpty()) {
-            errors.put("name", "Name is empty");
-        }
-
-        if (userEmail == null || userEmail.isEmpty()) {
-            errors.put("email", "Email is empty");
-        }
-
-        if (userPassword == null || userPassword.isEmpty()) {
-            errors.put("password", "Password is empty");
-        }
-
-        if (userConfirmPassword == null || userConfirmPassword.isEmpty()) {
-            errors.put("confirmPassword", "Confirm Password is empty");
-        }
-
-        if (result.hasErrors() || !errors.isEmpty()) {
+        if (!errors.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
-        }
 
-        this.userService.saveUser(userRequest);
+        } else if (bindingResult.hasErrors()) {
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                errors.put(error.getField(), error.getDefaultMessage());
+            }
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+
+        } else {
+            this.userService.saveUser(userRequest);
+        }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(null);
     }
@@ -101,51 +93,44 @@ public class UserController {
     @PutMapping("/users-ajax/update")
     public ResponseEntity<Map<String, String>> update(
             @Valid @ModelAttribute("user") UserRequest userRequest,
-            BindingResult result,
+            BindingResult bindingResult,
             RedirectAttributes redirectAttributes,
             HttpServletResponse response) {
 
-        String userName = userRequest.getName();
         String userEmail = userRequest.getEmail();
+        String userTargetEmail = userRequest.getTargetEmail();
         String userPassword = userRequest.getPassword();
         String userConfirmPassword = userRequest.getConfirmPassword();
 
         Map<String, String> errors = new HashMap<>();
-        User checkExistedEmail = this.userService.findByEmail(userEmail);
+        User checkExistedEmail = userService.findByEmail(userEmail);
 
-        if (checkExistedEmail != null) {
+        if (checkExistedEmail != null && !checkExistedEmail.getEmail().equals(userTargetEmail)) {
             errors.put("update-email", "This email is already registered.");
             response.setStatus(HttpServletResponse.SC_CONFLICT);
         }
 
         if (userPassword != null && userConfirmPassword != null && !userPassword.equals(userConfirmPassword)) {
-            errors.put("update-confirmPassword", "Your confirmed password should be identical to your original password.");
+            errors.put("update-confirmPassword",
+                    "Your confirmed password should be identical to your original password.");
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
 
-        if (userName == null || userName.isEmpty()) {
-            errors.put("update-name", "Name is empty");
-        }
-
-        if (userEmail == null || userEmail.isEmpty()) {
-            errors.put("update-email", "Email is empty");
-        }
-
-        if (userPassword == null || userPassword.isEmpty()) {
-            errors.put("update-password", "Password is empty");
-        }
-
-        if (userConfirmPassword == null || userConfirmPassword.isEmpty()) {
-            errors.put("update-confirmPassword", "Confirm Password is empty");
-        }
-
-        if (result.hasErrors() || !errors.isEmpty()) {
+        if (!errors.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+
+        } else if (bindingResult.hasErrors()) {
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                errors.put("update-" + error.getField(), error.getDefaultMessage());
+            }
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+
+        } else {
+            this.userService.updateUser(userRequest);
         }
 
-        this.userService.updateUser(userRequest);
-
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
     @DeleteMapping("/users-ajax/delete")

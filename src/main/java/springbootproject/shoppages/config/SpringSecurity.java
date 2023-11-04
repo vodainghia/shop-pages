@@ -30,6 +30,7 @@ public class SpringSecurity {
                         .requestMatchers("/register/**").permitAll()
                         .requestMatchers("/build/**").permitAll()
                         .requestMatchers("/dist/**").permitAll()
+                        .requestMatchers("/js_scripts/**").permitAll()
                         .requestMatchers("/plugins/**").permitAll()
                         .requestMatchers("/dashboard").hasRole("ADMIN")
                         .requestMatchers("/users/**").hasRole("ADMIN")

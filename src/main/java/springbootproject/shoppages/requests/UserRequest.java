@@ -1,7 +1,7 @@
 package springbootproject.shoppages.requests;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,19 +15,19 @@ public class UserRequest {
 
     private Long id;
 
-    @NotEmpty(message = "Name should not be empty")
+    @NotBlank(message = "Name should not be empty")
     private String name;
 
-    @NotEmpty(message = "Email should not be empty")
+    @NotBlank(message = "Email should not be empty")
     @Email
     private String email;
 
     @Email
     private String targetEmail;
 
-    @NotEmpty(message = "Password should not be empty")
+    @NotBlank(message = "Password should not be empty")
     private String password;
 
-    @NotEmpty(message = "Confirm Password should not be empty")
+    @NotBlank(message = "Confirm Password should not be empty")
     private String confirmPassword;
 }
