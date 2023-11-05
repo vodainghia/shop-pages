@@ -12,6 +12,8 @@ public interface UserServiceInterface {
 
     List<UserRequest> getUsersDataList();
 
+    List<UserRequest> getUsersDataList(String searchCriteria);
+
     void updateUser(UserRequest userRequest);
 
     void deleteUser(UserRequest userRequest);

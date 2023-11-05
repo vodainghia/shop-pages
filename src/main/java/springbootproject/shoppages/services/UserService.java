@@ -94,6 +94,15 @@ public class UserService implements UserServiceInterface {
     @Override
     public List<UserRequest> getUsersDataList() {
         List<User> users = this.userRepo.findAll();
+
+        return users.stream().map(user -> convertUsers(user))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserRequest> getUsersDataList(String searchCriteria) {
+        List<User> users = this.userRepo.findEmailOrNameByKeyword(searchCriteria);
+
         return users.stream().map(user -> convertUsers(user))
                 .collect(Collectors.toList());
     }

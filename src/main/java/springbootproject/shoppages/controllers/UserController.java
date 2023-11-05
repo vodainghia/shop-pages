@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -45,6 +44,7 @@ public class UserController {
     public String getUsersDataList(Model model) {
         List<UserRequest> users = this.userService.getUsersDataList();
         model.addAttribute("users", users);
+        model.addAttribute("userCount", users.size());
 
         return "pages/users_table";
     }
@@ -53,7 +53,6 @@ public class UserController {
     public ResponseEntity<Map<String, String>> save(
             @Valid @ModelAttribute("user") UserRequest userRequest,
             BindingResult bindingResult,
-            RedirectAttributes redirectAttributes,
             HttpServletResponse response) {
 
         String userEmail = userRequest.getEmail();
@@ -94,7 +93,6 @@ public class UserController {
     public ResponseEntity<Map<String, String>> update(
             @Valid @ModelAttribute("user") UserRequest userRequest,
             BindingResult bindingResult,
-            RedirectAttributes redirectAttributes,
             HttpServletResponse response) {
 
         String userEmail = userRequest.getEmail();
@@ -155,6 +153,15 @@ public class UserController {
         this.userService.deleteUser(userRequest);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+    }
+
+    @PostMapping("/users-ajax/search-data")
+     public String search(Model model, @RequestParam("searchCriteria") String searchCriteria) {
+        List<UserRequest> users = this.userService.getUsersDataList(searchCriteria);
+        model.addAttribute("users", users);
+        model.addAttribute("userCount", users.size());
+
+        return "pages/users_table";
     }
 
 }

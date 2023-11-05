@@ -1,3 +1,5 @@
+let timeoutId = null;
+
 $(function () {
     loadListUsersData();
 
@@ -117,3 +119,21 @@ let loadListUsersData = function () {
         }
     });
 }
+
+$('#table_search').on('input', function () {
+    clearTimeout(timeoutId);
+    let searchCriteria = $('#table_search').val();
+
+    timeoutId = setTimeout(function () {
+        $.ajax({
+            url: "/users-ajax/search-data",
+            type: "POST",
+            dataType: "HTML",
+            data: { searchCriteria: searchCriteria },
+
+            success: function (data) {
+                $('#user_table').html(data);
+            }
+        });
+    }, 3000);
+});

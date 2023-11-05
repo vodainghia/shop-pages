@@ -13,13 +13,37 @@
             <td th:text="${user.name}"></td>
             <td th:text="${user.email}"></td>
             <td>
-                <a class="btn btn-app editBtn" data-toggle="modal" data-target="#modal-update" onclick="editBtnClick(this)">
+                <a class="btn btn-app editBtn" data-toggle="modal" data-target="#modal-update"
+                    onclick="editBtnClick(this)">
                     <i class="fas fa-edit"></i> Edit
                 </a>
-                <a class="btn btn-app deleteBtn" data-toggle="modal" data-target="#modal-delete" onclick="deleteBtnClick(this)">
+                <a class="btn btn-app deleteBtn" data-toggle="modal" data-target="#modal-delete"
+                    onclick="deleteBtnClick(this)">
                     <i class="fas fa-trash"></i> Delete
                 </a>
             </td>
         </tr>
     </tbody>
 </table>
+
+<div>
+    <!-- Paging -->
+    <nav>
+        <ul class="pagination">
+            <li th:if="${currentPage > 1}" class="page-item">
+                <a class="page-link" th:href="@{/users(page=${currentPage - 1})}">Prev</a>
+            </li>
+
+            <li th:each="pageNumber : ${#numbers.sequence(1, totalPages)}"
+                th:class="${pageNumber == currentPage} ? 'page-item active' : 'page-item'">
+                <a class="page-link" th:href="@{/users(page=${pageNumber})}" th:text="${pageNumber}"></a>
+            </li>
+
+            <li th:if="${currentPage < totalPages}" class="page-item">
+                <a class="page-link" th:href="@{/users(page=${currentPage + 1})}">Next</a>
+            </li>
+        </ul>
+    </nav>
+
+    <p id="totalUserDisplay" class="text-right p-3" th:text="'Total: ' + ${userCount}"></p>
+</div>
