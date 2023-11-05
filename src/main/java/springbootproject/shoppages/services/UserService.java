@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -97,6 +100,17 @@ public class UserService implements UserServiceInterface {
 
         return users.stream().map(user -> convertUsers(user))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<UserRequest> getUsersDataList(Pageable pageable) {
+        Page<User> userPage = this.userRepo.findAll(pageable);
+
+        List<UserRequest> userRequests = userPage.stream()
+                .map(user -> convertUsers(user))
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(userRequests, pageable, userPage.getTotalElements());
     }
 
     @Override

@@ -1,7 +1,7 @@
 let timeoutId = null;
 
 $(function () {
-    loadListUsersData();
+    loadListUsersData(1);
 
     $('#modal-create form').on('submit', function (e) {
         e.preventDefault();
@@ -13,7 +13,7 @@ $(function () {
             success: function (data) {
                 $('#modal-create').modal('hide');
                 $('.error-message').text('');
-                loadListUsersData();
+                loadListUsersData(1);
             },
 
             error: function (jqXHR, textStatus, err) {
@@ -38,7 +38,7 @@ $('#modal-update form').on('submit', function (e) {
         success: function (data) {
             $('#modal-update').modal('hide');
             $('.error-message').text('');
-            loadListUsersData();
+            loadListUsersData(1);
         },
 
         error: function (jqXHR, textStatus, err) {
@@ -64,7 +64,7 @@ $('#modal-delete form').on('submit', function (e) {
         success: function (data) {
             $('#modal-delete').modal('hide');
             $('.error-message').text('');
-            loadListUsersData();
+            loadListUsersData(1);
         },
 
         error: function (jqXHR, textStatus, err) {
@@ -108,10 +108,11 @@ function deleteBtnClick(button) {
     $('.error-message').text('');
 }
 
-let loadListUsersData = function () {
+let loadListUsersData = function (pageIndex) {
     $.ajax({
         url: "/users-ajax/list-data",
-        method: "POST",
+        method: "GET",
+        data: { pageIndex: pageIndex },
         dataType: "HTML",
 
         success: function (data) {

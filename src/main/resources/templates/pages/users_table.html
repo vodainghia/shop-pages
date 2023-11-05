@@ -26,24 +26,25 @@
     </tbody>
 </table>
 
-<div>
+<div class="d-flex justify-content-between align-items-center">
     <!-- Paging -->
-    <nav>
+    <nav class="d-flex justify-content-center align-items-center">
         <ul class="pagination">
-            <li th:if="${currentPage > 1}" class="page-item">
-                <a class="page-link" th:href="@{/users(page=${currentPage - 1})}">Prev</a>
+            <li th:if="${currentPage} > 1" class="page-item">
+                <a class="page-link" th:attr="onclick='loadListUsersData(' + (${currentPage} - 1) + ')'">Prev</a>
             </li>
 
             <li th:each="pageNumber : ${#numbers.sequence(1, totalPages)}"
                 th:class="${pageNumber == currentPage} ? 'page-item active' : 'page-item'">
-                <a class="page-link" th:href="@{/users(page=${pageNumber})}" th:text="${pageNumber}"></a>
+                <a class="page-link" th:text="${pageNumber}"
+                    th:attr="onclick='loadListUsersData(' + (${pageNumber}) + ')'"></a>
             </li>
 
-            <li th:if="${currentPage < totalPages}" class="page-item">
-                <a class="page-link" th:href="@{/users(page=${currentPage + 1})}">Next</a>
+            <li th:if="${currentPage} < ${totalPages}" class="page-item">
+                <a class="page-link" th:attr="onclick='loadListUsersData(' + (${currentPage} + 1) + ')'">Next</a>
             </li>
         </ul>
     </nav>
 
-    <p id="totalUserDisplay" class="text-right p-3" th:text="'Total: ' + ${userCount}"></p>
+    <p id="totalUserDisplay" class="mb-0 pr-3" th:text="'Total: ' + ${userCount}"></p>
 </div>
