@@ -103,6 +103,14 @@ public class UserService implements UserServiceInterface {
     }
 
     @Override
+    public List<UserRequest> getUsersDataList(String searchCriteria) {
+        List<User> users = this.userRepo.findEmailOrNameByKeyword(searchCriteria);
+
+        return users.stream().map(user -> convertUsers(user))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public Page<UserRequest> getUsersDataList(Pageable pageable) {
         Page<User> userPage = this.userRepo.findAll(pageable);
 
@@ -114,11 +122,14 @@ public class UserService implements UserServiceInterface {
     }
 
     @Override
-    public List<UserRequest> getUsersDataList(String searchCriteria) {
-        List<User> users = this.userRepo.findEmailOrNameByKeyword(searchCriteria);
+    public Page<UserRequest> getUsersDataList(Pageable pageable, String searchCriteria) {
+        Page<User> userPage = this.userRepo.findEmailOrNameByKeyword(pageable, searchCriteria);
 
-        return users.stream().map(user -> convertUsers(user))
+        List<UserRequest> userRequests = userPage.stream()
+                .map(user -> convertUsers(user))
                 .collect(Collectors.toList());
+
+        return new PageImpl<>(userRequests, pageable, userPage.getTotalElements());
     }
 
     private UserRequest convertUsers(User user) {

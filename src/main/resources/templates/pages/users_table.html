@@ -1,6 +1,8 @@
+<p id="totalUserDisplay" class="text-right pr-3" th:text="'Total: ' + ${userCount}"></p>
+
 <table class="table table-hover">
     <thead>
-        <tr class="justify-content-between">
+        <tr class="justify-content-center">
             <th>ID</th>
             <th>Fullname</th>
             <th>Email</th>
@@ -26,25 +28,22 @@
     </tbody>
 </table>
 
-<div class="d-flex justify-content-between align-items-center">
-    <!-- Paging -->
-    <nav class="d-flex justify-content-center align-items-center">
-        <ul class="pagination">
-            <li th:if="${currentPage} > 1" class="page-item">
-                <a class="page-link" th:attr="onclick='loadListUsersData(' + (${currentPage} - 1) + ')'">Prev</a>
-            </li>
+<!-- Paging -->
+<nav class="d-flex justify-content-center align-items-center">
+    <ul class="pagination text-center">
+        <li th:if="${currentPage} > 1" class="page-item">
+            <a class="page-link" th:attr="onclick='selectLoadDataMethod(' + ${currentPage - 1} + ')'">Prev</a>
+        </li>
 
-            <li th:each="pageNumber : ${#numbers.sequence(1, totalPages)}"
-                th:class="${pageNumber == currentPage} ? 'page-item active' : 'page-item'">
-                <a class="page-link" th:text="${pageNumber}"
-                    th:attr="onclick='loadListUsersData(' + (${pageNumber}) + ')'"></a>
-            </li>
+        <li th:each="pageNumber : ${#numbers.sequence(1, totalPages)}"
+            th:class="${pageNumber == currentPage} ? 'page-item active' : 'page-item'">
+            <a class="page-link" th:text="${pageNumber}"
+                th:attr="onclick='selectLoadDataMethod(' + ${pageNumber} + ')'"></a>
+        </li>
 
-            <li th:if="${currentPage} < ${totalPages}" class="page-item">
-                <a class="page-link" th:attr="onclick='loadListUsersData(' + (${currentPage} + 1) + ')'">Next</a>
-            </li>
-        </ul>
-    </nav>
-
-    <p id="totalUserDisplay" class="mb-0 pr-3" th:text="'Total: ' + ${userCount}"></p>
-</div>
+        <li th:if="${currentPage} < ${totalPages}" class="page-item">
+            <a class="page-link" th:attr="onclick='selectLoadDataMethod(' + ${currentPage + 1} + ')'">Next</a>
+        </li>
+    </ul>
+</nav>
+<!-- /.Paging -->

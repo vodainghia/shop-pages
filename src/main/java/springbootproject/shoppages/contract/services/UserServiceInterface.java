@@ -19,6 +19,8 @@ public interface UserServiceInterface {
     
     Page<UserRequest> getUsersDataList(Pageable pageable);
 
+    Page<UserRequest> getUsersDataList(Pageable pageable, String searchCriteria);
+
     void updateUser(UserRequest userRequest);
 
     void deleteUser(UserRequest userRequest);
