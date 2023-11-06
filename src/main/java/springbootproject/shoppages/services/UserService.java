@@ -6,7 +6,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -111,7 +113,11 @@ public class UserService implements UserServiceInterface {
     }
 
     @Override
-    public Page<UserRequest> getUsersDataList(Pageable pageable) {
+    public Page<UserRequest> getUsersDataList(Pageable pageable, String sortColumn, String sortDirection) {
+        Sort sort = Sort.by(sortColumn);
+        sort = sortDirection.equals("asc") ? sort.ascending() : sort.descending();
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+
         Page<User> userPage = this.userRepo.findAll(pageable);
 
         List<UserRequest> userRequests = userPage.stream()
@@ -122,7 +128,11 @@ public class UserService implements UserServiceInterface {
     }
 
     @Override
-    public Page<UserRequest> getUsersDataList(Pageable pageable, String searchCriteria) {
+    public Page<UserRequest> getUsersDataList(Pageable pageable, String searchCriteria, String sortColumn, String sortDirection) {
+        Sort sort = Sort.by(sortColumn);
+        sort = sortDirection.equals("asc") ? sort.ascending() : sort.descending();
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+
         Page<User> userPage = this.userRepo.findEmailOrNameByKeyword(pageable, searchCriteria);
 
         List<UserRequest> userRequests = userPage.stream()

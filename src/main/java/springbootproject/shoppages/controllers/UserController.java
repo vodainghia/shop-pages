@@ -44,14 +44,29 @@ public class UserController {
     }
 
     @GetMapping("/users-ajax/list-data")
-    public String getUsersDataList(Model model, @RequestParam("pageIndex") int pageIndex) {
+    @PostMapping("/users-ajax/search-data")
+    public String getUsersList(
+            Model model,
+            @RequestParam(name = "searchCriteria", required = false) String searchCriteria,
+            @RequestParam("pageIndex") int pageIndex,
+            @RequestParam(name = "sortColumn", required = false, defaultValue = "id") String sortColumn, 
+            @RequestParam(name = "sortDirection", required = false, defaultValue = "asc") String sortDirection) {
+
         Pageable pageable = PageRequest.of(pageIndex - 1, pageSize);
-        Page<UserRequest> userRequestPage = this.userService.getUsersDataList(pageable);
+        Page<UserRequest> userRequestPage;
+
+        if (searchCriteria != null && !searchCriteria.isEmpty()) {
+            userRequestPage = this.userService.getUsersDataList(pageable, searchCriteria, sortColumn, sortDirection);
+        } else {
+            userRequestPage = this.userService.getUsersDataList(pageable, sortColumn, sortDirection);
+        }
 
         model.addAttribute("users", userRequestPage.getContent());
         model.addAttribute("userCount", userRequestPage.getTotalElements());
         model.addAttribute("totalPages", userRequestPage.getTotalPages());
         model.addAttribute("currentPage", pageIndex);
+        model.addAttribute("sortColumn", sortColumn);
+        model.addAttribute("sortDirection", sortDirection);
 
         return "pages/users_table";
     }
@@ -160,23 +175,6 @@ public class UserController {
         this.userService.deleteUser(userRequest);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-    }
-
-    @PostMapping("/users-ajax/search-data")
-    public String search(
-            Model model,
-            @RequestParam("searchCriteria") String searchCriteria,
-            @RequestParam("pageIndex") int pageIndex) {
-
-        Pageable pageable = PageRequest.of(pageIndex - 1, pageSize);
-        Page<UserRequest> userRequestPage = this.userService.getUsersDataList(pageable, searchCriteria);
-
-        model.addAttribute("users", userRequestPage.getContent());
-        model.addAttribute("userCount", userRequestPage.getTotalElements());
-        model.addAttribute("totalPages", userRequestPage.getTotalPages());
-        model.addAttribute("currentPage", pageIndex);
-
-        return "pages/users_table";
     }
 
 }

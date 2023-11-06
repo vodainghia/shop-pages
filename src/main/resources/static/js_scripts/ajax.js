@@ -39,6 +39,9 @@ const ROUTING = {
 };
 
 let timeoutId = null;
+let lastSortColumn = 'id';
+let currentSortDirection = 'asc';
+
 
 $(function () {
     loadListUsersData(1);
@@ -53,7 +56,7 @@ $(function () {
             success: function (data) {
                 $(SELECTORS.modalCreate).modal('hide');
                 $(SELECTORS.errorMessageClass).text('');
-                selectLoadDataMethod(getCurrentPageByActiveClass());
+                selectLoadDataMethod(getCurrentPageByActiveClass(), lastSortColumn, currentSortDirection);
             },
 
             error: function (jqXHR, textStatus, err) {
@@ -78,7 +81,7 @@ $(SELECTORS.modalUpdateForm).on('submit', function (e) {
         success: function (data) {
             $(SELECTORS.modalUpdate).modal('hide');
             $(SELECTORS.errorMessageClass).text('');
-            selectLoadDataMethod(getCurrentPageByActiveClass());
+            selectLoadDataMethod(getCurrentPageByActiveClass(), lastSortColumn, currentSortDirection);
         },
 
         error: function (jqXHR, textStatus, err) {
@@ -104,7 +107,7 @@ $(SELECTORS.modalDeleteForm).on('submit', function (e) {
         success: function (data) {
             $(SELECTORS.modalDelete).modal('hide');
             $(SELECTORS.errorMessageClass).text('');
-            selectLoadDataMethod(getCurrentPageByActiveClass());
+            selectLoadDataMethod(getCurrentPageByActiveClass(), lastSortColumn, currentSortDirection);
         },
 
         error: function (jqXHR, textStatus, err) {
@@ -123,7 +126,7 @@ $(SELECTORS.tableSearchBtn).on('input', function () {
     let searchCriteria = $(SELECTORS.tableSearchBtn).val();
 
     timeoutId = setTimeout(function () {
-        loadSearchedListUsersData(searchCriteria, 1);
+        loadSearchedListUsersData(searchCriteria, 1, lastSortColumn, currentSortDirection);
     }, 3000);
 });
 
@@ -157,11 +160,11 @@ function deleteBtnClick(button) {
     $(SELECTORS.errorMessageClass).text('');
 }
 
-function loadListUsersData(pageIndex) {
+function loadListUsersData(pageIndex, sortColumn, sortDirection) {
     $.ajax({
         url: ROUTING.loadListUsers,
         method: "GET",
-        data: { pageIndex: pageIndex },
+        data: { pageIndex: pageIndex, sortColumn: sortColumn, sortDirection: sortDirection },
         dataType: "HTML",
 
         success: function (data) {
@@ -170,12 +173,12 @@ function loadListUsersData(pageIndex) {
     });
 }
 
-function loadSearchedListUsersData(keyword, pageIndex) {
+function loadSearchedListUsersData(keyword, pageIndex, sortColumn, sortDirection) {
     $.ajax({
         url: ROUTING.loadListSearchedUsers,
         type: "POST",
         dataType: "HTML",
-        data: { searchCriteria: keyword, pageIndex: pageIndex },
+        data: { searchCriteria: keyword, pageIndex: pageIndex, sortColumn: sortColumn, sortDirection: sortDirection },
 
         success: function (data) {
             $(SELECTORS.listUsersTable).html(data);
@@ -183,11 +186,22 @@ function loadSearchedListUsersData(keyword, pageIndex) {
     });
 }
 
-function selectLoadDataMethod(pageNumber) {
+function selectLoadDataMethod(pageNumber, sortColumn, sortDirection) {
     let searchValue = $(SELECTORS.tableSearchBtn).val();
 
-    !searchValue ? loadListUsersData(pageNumber)
-        : loadSearchedListUsersData(searchValue, pageNumber);
+    !searchValue ? loadListUsersData(pageNumber, sortColumn, sortDirection)
+        : loadSearchedListUsersData(searchValue, pageNumber, sortColumn, sortDirection);
 };
 
 let getCurrentPageByActiveClass = () => parseInt($(SELECTORS.pageItemActive).text(), 10);
+
+let sortTable = (columnName) => {
+    if (columnName === lastSortColumn) {
+        currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+        lastSortColumn = columnName;
+        currentSortDirection = 'asc';
+    }
+
+    selectLoadDataMethod(getCurrentPageByActiveClass(), columnName, currentSortDirection);
+};
