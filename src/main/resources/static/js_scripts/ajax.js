@@ -1,7 +1,7 @@
 let timeoutId = null;
 
 $(function () {
-    loadListUsersData();
+    loadListUsersData(1);
 
     $('#modal-create form').on('submit', function (e) {
         e.preventDefault();
@@ -13,7 +13,7 @@ $(function () {
             success: function (data) {
                 $('#modal-create').modal('hide');
                 $('.error-message').text('');
-                loadListUsersData();
+                selectLoadDataMethod(getCurrentPageByActiveClass());
             },
 
             error: function (jqXHR, textStatus, err) {
@@ -38,7 +38,7 @@ $('#modal-update form').on('submit', function (e) {
         success: function (data) {
             $('#modal-update').modal('hide');
             $('.error-message').text('');
-            loadListUsersData();
+            selectLoadDataMethod(getCurrentPageByActiveClass());
         },
 
         error: function (jqXHR, textStatus, err) {
@@ -64,7 +64,7 @@ $('#modal-delete form').on('submit', function (e) {
         success: function (data) {
             $('#modal-delete').modal('hide');
             $('.error-message').text('');
-            loadListUsersData();
+            selectLoadDataMethod(getCurrentPageByActiveClass());
         },
 
         error: function (jqXHR, textStatus, err) {
@@ -76,6 +76,15 @@ $('#modal-delete form').on('submit', function (e) {
             }
         }
     });
+});
+
+$('#table_search').on('input', function () {
+    clearTimeout(timeoutId);
+    let searchCriteria = $('#table_search').val();
+
+    timeoutId = setTimeout(function () {
+        loadSearchedListUsersData(searchCriteria, 1);
+    }, 3000);
 });
 
 function clearContent(button) {
@@ -108,10 +117,11 @@ function deleteBtnClick(button) {
     $('.error-message').text('');
 }
 
-let loadListUsersData = function () {
+let loadListUsersData = function (pageIndex) {
     $.ajax({
         url: "/users-ajax/list-data",
-        method: "POST",
+        method: "GET",
+        data: { pageIndex: pageIndex },
         dataType: "HTML",
 
         success: function (data) {
@@ -120,20 +130,24 @@ let loadListUsersData = function () {
     });
 }
 
-$('#table_search').on('input', function () {
-    clearTimeout(timeoutId);
-    let searchCriteria = $('#table_search').val();
+let loadSearchedListUsersData = function (keyword, pageIndex) {
+    $.ajax({
+        url: "/users-ajax/search-data",
+        type: "POST",
+        dataType: "HTML",
+        data: { searchCriteria: keyword, pageIndex: pageIndex },
 
-    timeoutId = setTimeout(function () {
-        $.ajax({
-            url: "/users-ajax/search-data",
-            type: "POST",
-            dataType: "HTML",
-            data: { searchCriteria: searchCriteria },
+        success: function (data) {
+            $('#user_table').html(data);
+        }
+    });
+}
 
-            success: function (data) {
-                $('#user_table').html(data);
-            }
-        });
-    }, 3000);
-});
+let selectLoadDataMethod = pageNumber => {
+    let searchValue = $('#table_search').val();
+
+    !searchValue ? loadListUsersData(pageNumber)
+        : loadSearchedListUsersData(searchValue, pageNumber);
+};
+
+let getCurrentPageByActiveClass = () => parseInt($('.page-item.active').text(), 10);

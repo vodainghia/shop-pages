@@ -4,6 +4,8 @@ import springbootproject.shoppages.models.User;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,5 +16,8 @@ public interface UserRepositoryInterface extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u WHERE u.name LIKE %:keyword% OR u.email LIKE %:keyword%")
     List<User> findEmailOrNameByKeyword(@Param("keyword") String keyword);
+
+    @Query("SELECT u FROM User u WHERE u.name LIKE %:keyword% OR u.email LIKE %:keyword%")
+    Page<User> findEmailOrNameByKeyword(Pageable pageable, @Param("keyword") String keyword);
 
 }

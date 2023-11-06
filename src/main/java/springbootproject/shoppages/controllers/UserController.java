@@ -1,9 +1,11 @@
 package springbootproject.shoppages.controllers;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -27,6 +29,7 @@ import springbootproject.shoppages.requests.UserRequest;
 public class UserController {
 
     protected UserServiceInterface userService;
+    protected int pageSize = 5;
 
     public UserController(UserServiceInterface userService) {
         this.userService = userService;
@@ -40,11 +43,15 @@ public class UserController {
         return "pages/users-ajax";
     }
 
-    @PostMapping("/users-ajax/list-data")
-    public String getUsersDataList(Model model) {
-        List<UserRequest> users = this.userService.getUsersDataList();
-        model.addAttribute("users", users);
-        model.addAttribute("userCount", users.size());
+    @GetMapping("/users-ajax/list-data")
+    public String getUsersDataList(Model model, @RequestParam("pageIndex") int pageIndex) {
+        Pageable pageable = PageRequest.of(pageIndex - 1, pageSize);
+        Page<UserRequest> userRequestPage = this.userService.getUsersDataList(pageable);
+
+        model.addAttribute("users", userRequestPage.getContent());
+        model.addAttribute("userCount", userRequestPage.getTotalElements());
+        model.addAttribute("totalPages", userRequestPage.getTotalPages());
+        model.addAttribute("currentPage", pageIndex);
 
         return "pages/users_table";
     }
@@ -156,10 +163,18 @@ public class UserController {
     }
 
     @PostMapping("/users-ajax/search-data")
-     public String search(Model model, @RequestParam("searchCriteria") String searchCriteria) {
-        List<UserRequest> users = this.userService.getUsersDataList(searchCriteria);
-        model.addAttribute("users", users);
-        model.addAttribute("userCount", users.size());
+    public String search(
+            Model model,
+            @RequestParam("searchCriteria") String searchCriteria,
+            @RequestParam("pageIndex") int pageIndex) {
+
+        Pageable pageable = PageRequest.of(pageIndex - 1, pageSize);
+        Page<UserRequest> userRequestPage = this.userService.getUsersDataList(pageable, searchCriteria);
+
+        model.addAttribute("users", userRequestPage.getContent());
+        model.addAttribute("userCount", userRequestPage.getTotalElements());
+        model.addAttribute("totalPages", userRequestPage.getTotalPages());
+        model.addAttribute("currentPage", pageIndex);
 
         return "pages/users_table";
     }
