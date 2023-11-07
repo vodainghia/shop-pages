@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -43,14 +44,12 @@ public class UserController {
         return "pages/users-ajax";
     }
 
-    @GetMapping("/users-ajax/list-data")
     @PostMapping("/users-ajax/search-data")
-    public String getUsersList(
-            Model model,
-            @RequestParam(name = "searchCriteria", required = false) String searchCriteria,
-            @RequestParam("pageIndex") int pageIndex,
-            @RequestParam(name = "sortColumn", required = false, defaultValue = "id") String sortColumn, 
-            @RequestParam(name = "sortDirection", required = false, defaultValue = "asc") String sortDirection) {
+    public String getUsersList(Model model, @RequestBody Map<String, String> requestBody) {
+        String searchCriteria = requestBody.get("lastSearchValue");
+        int pageIndex = Integer.parseInt(requestBody.get("lastPageIndex"));
+        String sortColumn = requestBody.get("lastSortColumn");
+        String sortDirection = requestBody.get("currentSortDirection");
 
         Pageable pageable = PageRequest.of(pageIndex - 1, pageSize);
         Page<UserRequest> userRequestPage;

@@ -3,9 +3,9 @@
 <table class="table table-hover">
     <thead>
         <tr class="justify-content-center">
-            <th onclick="sortTable('id')">ID</th>
-            <th onclick="sortTable('name')">Fullname</th>
-            <th onclick="sortTable('email')">Email</th>
+            <th sort-column="id" onclick="sortTable('id')">ID</th>
+            <th sort-column="name" onclick="sortTable('name')">Fullname</th>
+            <th sort-column="email" onclick="sortTable('email')">Email</th>
             <th>Action</th>
         </tr>
     </thead>
@@ -32,17 +32,17 @@
 <nav class="d-flex justify-content-center align-items-center">
     <ul class="pagination text-center">
         <li th:if="${currentPage} > 1" class="page-item">
-            <a class="page-link" th:attr="onclick='selectLoadDataMethod(' + ${currentPage - 1} + ')'">Prev</a>
+            <a class="page-link" th:attr="onclick='movingToPage(' + ${currentPage - 1} + ')'">Prev</a>
         </li>
 
         <li th:each="pageNumber : ${#numbers.sequence(1, totalPages)}"
             th:class="${pageNumber == currentPage} ? 'page-item active' : 'page-item'">
             <a class="page-link" th:text="${pageNumber}"
-                th:attr="onclick='selectLoadDataMethod(' + ${pageNumber} + ')'"></a>
+                th:attr="onclick='movingToPage(' + ${pageNumber} + ')'"></a>
         </li>
 
         <li th:if="${currentPage} < ${totalPages}" class="page-item">
-            <a class="page-link" th:attr="onclick='selectLoadDataMethod(' + ${currentPage + 1} + ')'">Next</a>
+            <a class="page-link" th:attr="onclick='movingToPage(' + ${currentPage + 1} + ')'">Next</a>
         </li>
     </ul>
 </nav>
