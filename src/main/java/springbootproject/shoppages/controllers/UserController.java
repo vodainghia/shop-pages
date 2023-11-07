@@ -62,7 +62,7 @@ public class UserController {
 
         model.addAttribute("users", userRequestPage.getContent());
         model.addAttribute("userCount", userRequestPage.getTotalElements());
-        model.addAttribute("totalPages", userRequestPage.getTotalPages());
+        model.addAttribute("totalPages", userRequestPage.getTotalPages() != 0 ? userRequestPage.getTotalPages() : 1);
         model.addAttribute("currentPage", pageIndex);
         model.addAttribute("sortColumn", sortColumn);
         model.addAttribute("sortDirection", sortDirection);

@@ -22,11 +22,14 @@ const SELECTORS = {
     deleteTargetEmail: '#delete-email',
     deleteTargetEmailDisplay: '#delete-email-display',
 
-    colName: `th[sort-column='${columnName}']`,
     nameRowOnTable: 'td:nth-child(2)',
     emailRowOnTable: 'td:nth-child(3)',
     errorMessageClass: '.error-message',
 
+    ascText: 'asc',
+    descText: 'desc',
+    sortUpIconClass: 'pl-1 fas fa-sort-up',
+    sortDownIconClass: 'pl-1 fas fa-sort-down',
 };
 
 const ROUTING = {
@@ -34,7 +37,6 @@ const ROUTING = {
     updateUser: '/users-ajax/update',
     deleteUser: '/users-ajax/delete',
     loadListSearchedUsers: '/users-ajax/search-data',
-
 };
 
 let timeoutId = null;
@@ -43,13 +45,11 @@ let searchCriteriaBody = {
     lastSearchValue: '',
     lastPageIndex: 1,
     lastSortColumn: 'id',
-    currentSortDirection: 'asc',
+    currentSortDirection: SELECTORS.ascText,
 }
-
 
 $(function () {
     loadSearchedListUsersData(searchCriteriaBody);
-    changeArrowDirection(searchCriteriaBody.lastSortColumn);
 
     $(SELECTORS.modalCreateForm).on('submit', function (e) {
         e.preventDefault();
@@ -59,110 +59,109 @@ $(function () {
             url: ROUTING.createUser,
             data: $(this).serialize(),
 
-            success: function (data) {
-                $(SELECTORS.modalCreate).modal('hide');
-                $(SELECTORS.errorMessageClass).text('');
-                loadSearchedListUsersData(searchCriteriaBody);
+            success: function () {
+                onSuccess(SELECTORS.modalCreate);
             },
 
-            error: function (jqXHR, textStatus, err) {
-                let errors = jqXHR.responseJSON;
-                $(SELECTORS.errorMessageClass).text('');
-
-                for (let field in errors) {
-                    $('#' + field + '-error').text(errors[field]);
-                }
+            error: function (jqXHR) {
+                onError(jqXHR);
             }
-        })
+        });
+    });
+
+    $(SELECTORS.modalUpdateForm).on('submit', function (e) {
+        e.preventDefault();
+        $.ajax({
+            type: "PUT",
+            url: ROUTING.updateUser,
+            data: $(this).serialize(),
+
+            success: function () {
+                onSuccess(SELECTORS.modalUpdate);
+            },
+
+            error: function (jqXHR) {
+                onError(jqXHR);
+            }
+        });
+    });
+
+    $(SELECTORS.modalDeleteForm).on('submit', function (e) {
+        e.preventDefault();
+        const deleteEmail = $(SELECTORS.deleteTargetEmail).val();
+
+        $.ajax({
+            url: ROUTING.deleteUser,
+            type: "DELETE",
+            data: { email: deleteEmail },
+
+            success: function () {
+                onSuccess(SELECTORS.modalDelete);
+            },
+
+            error: function (jqXHR) {
+                onError(jqXHR);
+            }
+        });
+    });
+
+    $(SELECTORS.tableSearchBtn).on('input', function () {
+        clearTimeout(timeoutId);
+        const searchCriteria = $(SELECTORS.tableSearchBtn).val();
+
+        searchCriteriaBody.lastSearchValue = searchCriteria;
+        searchCriteriaBody.lastPageIndex = 1;
+
+        timeoutId = setTimeout(function () {
+            loadSearchedListUsersData(searchCriteriaBody);
+        }, 3000);
     });
 });
 
-$(SELECTORS.modalUpdateForm).on('submit', function (e) {
-    e.preventDefault();
-    $.ajax({
-        type: "PUT",
-        url: ROUTING.updateUser,
-        data: $(this).serialize(),
+const onSuccess = (modalSelector) => {
+    $(modalSelector).modal('hide');
+    $(SELECTORS.errorMessageClass).text('');
+    loadSearchedListUsersData(searchCriteriaBody);
+}
 
-        success: function (data) {
-            $(SELECTORS.modalUpdate).modal('hide');
-            $(SELECTORS.errorMessageClass).text('');
-            loadSearchedListUsersData(searchCriteriaBody);
-        },
+const onError = (jqXHR) => {
+    const errors = jqXHR.responseJSON;
+    $(SELECTORS.errorMessageClass).text('');
 
-        error: function (jqXHR, textStatus, err) {
-            let errors = jqXHR.responseJSON;
-            $(SELECTORS.errorMessageClass).text('');
+    for (let field in errors) {
+        $('#' + field + '-error').text(errors[field]);
+    }
+}
 
-            for (let field in errors) {
-                $('#' + field + '-error').text(errors[field]);
-            }
-        }
-    })
-});
+const sortTable = (columnName) => {
+    const lastCol = getTableHeaderColumnSelector(searchCriteriaBody.lastSortColumn);
+    lastCol.children('i').remove();
 
-$(SELECTORS.modalDeleteForm).on('submit', function (e) {
-    e.preventDefault();
-    let deleteEmail = $(SELECTORS.deleteTargetEmail).val();
-
-    $.ajax({
-        url: ROUTING.deleteUser,
-        type: "DELETE",
-        data: { email: deleteEmail },
-
-        success: function (data) {
-            $(SELECTORS.modalDelete).modal('hide');
-            $(SELECTORS.errorMessageClass).text('');
-            loadSearchedListUsersData(searchCriteriaBody);
-        },
-
-        error: function (jqXHR, textStatus, err) {
-            let errors = jqXHR.responseJSON;
-            $(SELECTORS.errorMessageClass).text('');
-
-            for (let field in errors) {
-                $('#' + field + '-error').text(errors[field]);
-            }
-        }
-    });
-});
-
-$(SELECTORS.tableSearchBtn).on('input', function () {
-    clearTimeout(timeoutId);
-    let searchCriteria = $(SELECTORS.tableSearchBtn).val();
-
-    searchCriteriaBody.lastSearchValue = searchCriteria;
-    searchCriteriaBody.lastPageIndex = 1;
-
-    timeoutId = setTimeout(function () {
-        loadSearchedListUsersData(searchCriteriaBody);
-    }, 3000);
-});
-
-let sortTable = (columnName) => {
     if (columnName === searchCriteriaBody.lastSortColumn) {
-        searchCriteriaBody.currentSortDirection = searchCriteriaBody.currentSortDirection === 'asc' ? 'desc' : 'asc';
+        searchCriteriaBody.currentSortDirection =
+            searchCriteriaBody.currentSortDirection === SELECTORS.ascText ?
+                SELECTORS.descText : SELECTORS.ascText;
     } else {
         searchCriteriaBody.lastSortColumn = columnName;
-        searchCriteriaBody.currentSortDirection = 'asc';
+        searchCriteriaBody.currentSortDirection = SELECTORS.ascText;
     }
-
-    changeArrowDirection(columnName);
 
     loadSearchedListUsersData(searchCriteriaBody);
 };
 
-let changeArrowDirection = (columnName) => {
-    let lastCol = $(SELECTORS.colName(searchCriteriaBody.lastSortColumn));
-    let currentCol = $(SELECTORS.colName(columnName));
-    let arrowIcon = document.createElement('i');
+const changeArrowDirection = (columnName) => {
+    const currentCol = getTableHeaderColumnSelector(columnName);
+    const arrowIcon = document.createElement('i');
 
-    arrowIcon.className = searchCriteriaBody.currentSortDirection === 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down';
-    lastCol.find('i').remove();
-    currentCol.appendChild(arrowIcon);
+    arrowIcon.className = searchCriteriaBody.currentSortDirection === SELECTORS.ascText ?
+        SELECTORS.sortUpIconClass : SELECTORS.sortDownIconClass;
+
+    currentCol.append(arrowIcon);
 }
 
-let movingToPage = (pageNumber) => {
+const getTableHeaderColumnSelector = (col) => $(`th[sort-column='${col}']`);
+
+const movingToPage = (pageNumber) => {
     searchCriteriaBody.lastPageIndex = pageNumber;
 
     loadSearchedListUsersData(searchCriteriaBody);
@@ -178,6 +177,7 @@ function loadSearchedListUsersData(requestBody) {
 
         success: function (data) {
             $(SELECTORS.listUsersTable).html(data);
+            changeArrowDirection(searchCriteriaBody.lastSortColumn);
         }
     });
 }
