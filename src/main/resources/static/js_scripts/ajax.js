@@ -55,7 +55,7 @@ $(function () {
         e.preventDefault();
 
         $.ajax({
-            type: "POST",
+            type: 'POST',
             url: ROUTING.createUser,
             data: $(this).serialize(),
 
@@ -72,7 +72,7 @@ $(function () {
     $(SELECTORS.modalUpdateForm).on('submit', function (e) {
         e.preventDefault();
         $.ajax({
-            type: "PUT",
+            type: 'PUT',
             url: ROUTING.updateUser,
             data: $(this).serialize(),
 
@@ -92,7 +92,7 @@ $(function () {
 
         $.ajax({
             url: ROUTING.deleteUser,
-            type: "DELETE",
+            type: 'DELETE',
             data: { email: deleteEmail },
 
             success: function () {
@@ -170,7 +170,7 @@ const movingToPage = (pageNumber) => {
 function loadSearchedListUsersData(requestBody) {
     $.ajax({
         url: ROUTING.loadListSearchedUsers,
-        type: "POST",
+        type: 'POST',
         contentType: 'application/json; charset=utf-8',
         dataType: 'HTML',
         data: JSON.stringify(requestBody),
@@ -182,7 +182,7 @@ function loadSearchedListUsersData(requestBody) {
     });
 }
 
-function clearContent(button) {
+function clearCreateUserModal(button) {
     $(SELECTORS.nameFieldCreate).val('');
     $(SELECTORS.emailFieldCreate).val('');
     $(SELECTORS.passwordFieldCreate).val('');

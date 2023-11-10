@@ -63,15 +63,22 @@ public class UserService implements UserServiceInterface {
     @Override
     public void updateUser(UserRequest userRequest) {
         User targetUser = findByEmail(userRequest.getTargetEmail());
+        String userPassword = userRequest.getPassword();
+        String userEmail = userRequest.getEmail();
+        String userName = userRequest.getName();
 
-        targetUser.setName(userRequest.getName());
-
-        if (!userRequest.getEmail().equals(targetUser.getEmail())) {
-            targetUser.setEmail(userRequest.getEmail());
+        if (!userName.equals(targetUser.getName())) {
+            targetUser.setName(userName);
         }
 
-        String pw = this.passwordEncoder.encode(userRequest.getPassword());
-        targetUser.setPassword(pw);
+        if (!userEmail.equals(targetUser.getEmail())) {
+            targetUser.setEmail(userEmail);
+        }
+
+        if (!userPassword.isEmpty()) {
+            String pw = this.passwordEncoder.encode(userPassword);
+            targetUser.setPassword(pw);
+        }
 
         this.userRepo.save(targetUser);
     }
@@ -128,7 +135,8 @@ public class UserService implements UserServiceInterface {
     }
 
     @Override
-    public Page<UserRequest> getUsersDataList(Pageable pageable, String searchCriteria, String sortColumn, String sortDirection) {
+    public Page<UserRequest> getUsersDataList(Pageable pageable, String searchCriteria, String sortColumn,
+            String sortDirection) {
         Sort sort = Sort.by(sortColumn);
         sort = sortDirection.equals("asc") ? sort.ascending() : sort.descending();
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);

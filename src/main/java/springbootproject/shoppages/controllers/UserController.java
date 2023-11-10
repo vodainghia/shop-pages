@@ -129,7 +129,7 @@ public class UserController {
             response.setStatus(HttpServletResponse.SC_CONFLICT);
         }
 
-        if (userPassword != null && userConfirmPassword != null && !userPassword.equals(userConfirmPassword)) {
+        if (!userPassword.equals(userConfirmPassword)) {
             errors.put("update-confirmPassword",
                     "Your confirmed password should be identical to your original password.");
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
