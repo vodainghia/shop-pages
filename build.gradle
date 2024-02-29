@@ -40,8 +40,15 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
+// bootJar {
+//     manifest {
+// 		attributes 'Main-Class': 'springbootproject.shoppages.ShopPagesApplication'
+//     }
+// }
+
 bootJar {
-    manifest {
-		attributes 'Main-Class': 'springbootproject.shoppages.ShopPagesApplication'
-    }
+    archiveClassifier.set('boot')
 }
+jar {
+    archiveClassifier.set('')
+}  
