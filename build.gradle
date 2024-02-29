@@ -40,6 +40,8 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-ext {
-	mainClassName = 'springbootproject.shoppages.ShopPagesApplication'
+bootJar {
+    manifest {
+		attributes 'Start-Class': 'springbootproject.shoppages.ShopPagesApplication'
+    }
 }
