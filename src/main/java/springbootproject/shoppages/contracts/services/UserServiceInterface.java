@@ -19,8 +19,7 @@ public interface UserServiceInterface {
     
     Page<UserRequest> getUsersDataList(Pageable pageable, String sortColumn, String sortDirection);
 
-    Page<UserRequest> getUsersDataList(Pageable pageable, String searchCriteria, String sortColumn,
-            String sortDirection);
+    Page<UserRequest> getUsersDataList(Pageable pageable, String searchCriteria, String sortColumn, String sortDirection);
 
     void updateUser(UserRequest userRequest);
 

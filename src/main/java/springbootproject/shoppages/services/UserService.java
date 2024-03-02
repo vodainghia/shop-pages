@@ -20,7 +20,6 @@ import springbootproject.shoppages.requests.UserRequest;
 
 @Service
 public class UserService implements UserServiceInterface {
-
     protected UserRepositoryInterface userRepo;
     protected RoleRepositoryInterface roleRepo;
 
@@ -32,10 +31,8 @@ public class UserService implements UserServiceInterface {
     @Override
     public void saveUser(UserRequest userRequest) {
         User user = new User();
-
         user.setName(userRequest.getName());
         user.setEmail(userRequest.getEmail());
-
         user.setPassword(userRequest.getPassword());
 
         Role adminRole = this.roleRepo.findByName("ROLE_ADMIN");
@@ -46,7 +43,6 @@ public class UserService implements UserServiceInterface {
 
         List<Role> userRoles = new ArrayList<>();
         userRoles.add(adminRole);
-
         user.setRoles(userRoles);
 
         this.userRepo.save(user);
@@ -77,7 +73,6 @@ public class UserService implements UserServiceInterface {
     @Override
     public void deleteUser(UserRequest userRequest) {
         User user = this.userRepo.findByEmail(userRequest.getEmail());
-
         user.getRoles().clear();
         this.userRepo.delete(user);
     }
@@ -98,16 +93,14 @@ public class UserService implements UserServiceInterface {
     public List<UserRequest> getUsersDataList() {
         List<User> users = this.userRepo.findAll();
 
-        return users.stream().map(this::convertUsers)
-                .collect(Collectors.toList());
+        return users.stream().map(this::convertUsers).collect(Collectors.toList());
     }
 
     @Override
     public List<UserRequest> getUsersDataList(String searchCriteria) {
         List<User> users = this.userRepo.findEmailOrNameByKeyword(searchCriteria);
 
-        return users.stream().map(this::convertUsers)
-                .collect(Collectors.toList());
+        return users.stream().map(this::convertUsers).collect(Collectors.toList());
     }
 
     @Override
@@ -126,8 +119,7 @@ public class UserService implements UserServiceInterface {
     }
 
     @Override
-    public Page<UserRequest> getUsersDataList(Pageable pageable, String searchCriteria, String sortColumn,
-            String sortDirection) {
+    public Page<UserRequest> getUsersDataList(Pageable pageable, String searchCriteria, String sortColumn, String sortDirection) {
         Sort sort = Sort.by(sortColumn);
         sort = sortDirection.equals("asc") ? sort.ascending() : sort.descending();
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
