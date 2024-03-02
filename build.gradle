@@ -36,15 +36,9 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
-tasks.named('test') {
+tasks.named("test") {
 	useJUnitPlatform()
 }
-
-// bootJar {
-//     manifest {
-// 		attributes 'Main-Class': 'springbootproject.shoppages.ShopPagesApplication'
-//     }
-// }
 
 bootJar {
     archiveClassifier.set('boot')

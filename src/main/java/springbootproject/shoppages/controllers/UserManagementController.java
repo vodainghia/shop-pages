@@ -73,11 +73,7 @@ public class UserManagementController {
      }
 
      @PostMapping("/users/update")
-     public String update(
-             @Valid @ModelAttribute("user") UserRequest userRequest,
-             BindingResult result,
-             Model model) {
-
+     public String update(@Valid @ModelAttribute("user") UserRequest userRequest, BindingResult result, Model model) {
          User checkExistedEmail = this.userService.findByEmail(userRequest.getEmail());
 
          if (checkExistedEmail != null) {
