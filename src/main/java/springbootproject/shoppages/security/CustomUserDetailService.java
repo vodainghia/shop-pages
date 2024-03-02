@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import springbootproject.shoppages.contract.repositories.UserRepositoryInterface;
+import springbootproject.shoppages.contracts.repositories.UserRepositoryInterface;
 import springbootproject.shoppages.models.User;
 import springbootproject.shoppages.models.Role;
 
@@ -32,15 +32,13 @@ public class CustomUserDetailService implements UserDetailsService {
                     user.getPassword(),
                     mapRolesAuthorities(user.getRoles()));
         } else {
-            throw new UsernameNotFoundException("Invalid username or password");
+            throw new UsernameNotFoundException("Your inputted email is not found");
         }
     }
 
     private Collection<? extends GrantedAuthority> mapRolesAuthorities(Collection<Role> roles) {
-        Collection<? extends GrantedAuthority> mapRoles = roles.stream().map(
+        return roles.stream().map(
             role -> new SimpleGrantedAuthority(role.getName()))
             .collect(Collectors.toList());
-
-        return mapRoles;
     }
 }

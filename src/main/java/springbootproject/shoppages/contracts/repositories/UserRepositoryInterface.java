@@ -1,4 +1,4 @@
-package springbootproject.shoppages.contract.repositories;
+package springbootproject.shoppages.contracts.repositories;
 
 import springbootproject.shoppages.models.User;
 

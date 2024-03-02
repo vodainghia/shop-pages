@@ -9,12 +9,11 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import springbootproject.shoppages.contract.repositories.RoleRepositoryInterface;
-import springbootproject.shoppages.contract.repositories.UserRepositoryInterface;
-import springbootproject.shoppages.contract.services.UserServiceInterface;
+import springbootproject.shoppages.contracts.repositories.RoleRepositoryInterface;
+import springbootproject.shoppages.contracts.repositories.UserRepositoryInterface;
+import springbootproject.shoppages.contracts.services.UserServiceInterface;
 import springbootproject.shoppages.models.Role;
 import springbootproject.shoppages.models.User;
 import springbootproject.shoppages.requests.UserRequest;
@@ -24,16 +23,10 @@ public class UserService implements UserServiceInterface {
 
     protected UserRepositoryInterface userRepo;
     protected RoleRepositoryInterface roleRepo;
-    protected PasswordEncoder passwordEncoder;
 
-    public UserService(
-            UserRepositoryInterface userRepo,
-            RoleRepositoryInterface roleRepo,
-            PasswordEncoder passwordEncoder) {
-
+    public UserService(UserRepositoryInterface userRepo, RoleRepositoryInterface roleRepo) {
         this.userRepo = userRepo;
         this.roleRepo = roleRepo;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -43,8 +36,7 @@ public class UserService implements UserServiceInterface {
         user.setName(userRequest.getName());
         user.setEmail(userRequest.getEmail());
 
-        String pw = this.passwordEncoder.encode(userRequest.getPassword());
-        user.setPassword(pw);
+        user.setPassword(userRequest.getPassword());
 
         Role adminRole = this.roleRepo.findByName("ROLE_ADMIN");
 
@@ -76,8 +68,7 @@ public class UserService implements UserServiceInterface {
         }
 
         if (!userPassword.isEmpty()) {
-            String pw = this.passwordEncoder.encode(userPassword);
-            targetUser.setPassword(pw);
+            targetUser.setPassword(userPassword);
         }
 
         this.userRepo.save(targetUser);
@@ -107,7 +98,7 @@ public class UserService implements UserServiceInterface {
     public List<UserRequest> getUsersDataList() {
         List<User> users = this.userRepo.findAll();
 
-        return users.stream().map(user -> convertUsers(user))
+        return users.stream().map(this::convertUsers)
                 .collect(Collectors.toList());
     }
 
@@ -115,7 +106,7 @@ public class UserService implements UserServiceInterface {
     public List<UserRequest> getUsersDataList(String searchCriteria) {
         List<User> users = this.userRepo.findEmailOrNameByKeyword(searchCriteria);
 
-        return users.stream().map(user -> convertUsers(user))
+        return users.stream().map(this::convertUsers)
                 .collect(Collectors.toList());
     }
 
@@ -128,7 +119,7 @@ public class UserService implements UserServiceInterface {
         Page<User> userPage = this.userRepo.findAll(pageable);
 
         List<UserRequest> userRequests = userPage.stream()
-                .map(user -> convertUsers(user))
+                .map(this::convertUsers)
                 .collect(Collectors.toList());
 
         return new PageImpl<>(userRequests, pageable, userPage.getTotalElements());
@@ -144,7 +135,7 @@ public class UserService implements UserServiceInterface {
         Page<User> userPage = this.userRepo.findEmailOrNameByKeyword(pageable, searchCriteria);
 
         List<UserRequest> userRequests = userPage.stream()
-                .map(user -> convertUsers(user))
+                .map(this::convertUsers)
                 .collect(Collectors.toList());
 
         return new PageImpl<>(userRequests, pageable, userPage.getTotalElements());

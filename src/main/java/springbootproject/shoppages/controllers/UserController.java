@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import springbootproject.shoppages.contract.services.UserServiceInterface;
+import springbootproject.shoppages.contracts.services.UserServiceInterface;
 import springbootproject.shoppages.models.User;
 import springbootproject.shoppages.requests.UserRequest;
 
@@ -71,11 +71,7 @@ public class UserController {
     }
 
     @PostMapping("/users-ajax/save")
-    public ResponseEntity<Map<String, String>> save(
-            @Valid @ModelAttribute("user") UserRequest userRequest,
-            BindingResult bindingResult,
-            HttpServletResponse response) {
-
+    public ResponseEntity<Map<String, String>> save(@Valid @ModelAttribute("user") UserRequest userRequest, BindingResult bindingResult, HttpServletResponse response) {
         String userEmail = userRequest.getEmail();
         String userPassword = userRequest.getPassword();
         String userConfirmPassword = userRequest.getConfirmPassword();
@@ -111,11 +107,7 @@ public class UserController {
     }
 
     @PutMapping("/users-ajax/update")
-    public ResponseEntity<Map<String, String>> update(
-            @Valid @ModelAttribute("user") UserRequest userRequest,
-            BindingResult bindingResult,
-            HttpServletResponse response) {
-
+    public ResponseEntity<Map<String, String>> update(@Valid @ModelAttribute("user") UserRequest userRequest, BindingResult bindingResult, HttpServletResponse response) {
         String userEmail = userRequest.getEmail();
         String userTargetEmail = userRequest.getTargetEmail();
         String userPassword = userRequest.getPassword();
@@ -130,8 +122,7 @@ public class UserController {
         }
 
         if (!userPassword.equals(userConfirmPassword)) {
-            errors.put("update-confirmPassword",
-                    "Your confirmed password should be identical to your original password.");
+            errors.put("update-confirmPassword", "Your confirmed password should be identical to your original password.");
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
 
@@ -153,10 +144,7 @@ public class UserController {
     }
 
     @DeleteMapping("/users-ajax/delete")
-    public ResponseEntity<Map<String, String>> delete(
-            @RequestParam("email") String email,
-            HttpServletResponse response) {
-
+    public ResponseEntity<Map<String, String>> delete(@RequestParam("email") String email, HttpServletResponse response) {
         Map<String, String> errors = new HashMap<>();
         User checkExistedEmail = this.userService.findByEmail(email);
 

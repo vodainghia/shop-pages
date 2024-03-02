@@ -1,4 +1,4 @@
-package springbootproject.shoppages.contract.services;
+package springbootproject.shoppages.contracts.services;
 
 import java.util.List;
 

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import jakarta.validation.Valid;
-import springbootproject.shoppages.contract.services.UserServiceInterface;
+import springbootproject.shoppages.contracts.services.UserServiceInterface;
 import springbootproject.shoppages.models.User;
 import springbootproject.shoppages.requests.UserRequest;
 
@@ -38,7 +38,7 @@ public class RegisterController {
         User checkExistedEmail = this.userService.findByEmail(userRequest.getEmail());
 
         if (checkExistedEmail != null) {
-            result.rejectValue("email", "409", "This email is already registed.");
+            result.rejectValue("email", "409", "This email is already register.");
         }
 
         if (result.hasErrors()) {

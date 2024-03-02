@@ -12,7 +12,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import springbootproject.shoppages.contract.services.UserServiceInterface;
+import springbootproject.shoppages.contracts.services.UserServiceInterface;
 import springbootproject.shoppages.models.User;
 import springbootproject.shoppages.requests.UserRequest;
 
@@ -41,12 +41,7 @@ public class UserManagementController {
     }
 
     @PostMapping("/users/save")
-    public String save(
-            @Valid @ModelAttribute("user") UserRequest userRequest,
-            BindingResult result,
-            RedirectAttributes redirectAttributes,
-            HttpServletResponse response) {
-
+    public String save(@Valid @ModelAttribute("user") UserRequest userRequest, BindingResult result, RedirectAttributes redirectAttributes, HttpServletResponse response) {
         User checkExistedEmail = userService.findByEmail(userRequest.getEmail());
 
         if (checkExistedEmail != null) {
@@ -66,7 +61,7 @@ public class UserManagementController {
         }
 
         this.userService.saveUser(userRequest);
-        redirectAttributes.addFlashAttribute("success", "User saved successfully.");
+        redirectAttributes.addFlashAttribute("success", "User has been saved successfully.");
         response.setStatus(HttpServletResponse.SC_CREATED);
 
         return "redirect:/users?success";
