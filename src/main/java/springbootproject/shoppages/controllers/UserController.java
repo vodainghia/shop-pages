@@ -61,7 +61,7 @@ public class UserController {
         }
 
         model.addAttribute("users", userRequestPage.getContent());
-        model.addAttribute("userCount", userRequestPage.getTotalElements());
+        model.addAttribute("userCount", userRequestPage.getTotalElements() + 1);
         model.addAttribute("totalPages", userRequestPage.getTotalPages() != 0 ? userRequestPage.getTotalPages() : 1);
         model.addAttribute("currentPage", pageIndex);
         model.addAttribute("sortColumn", sortColumn);
@@ -81,7 +81,7 @@ public class UserController {
 
         if (checkExistedEmail != null) {
             errors.put("email", "This email is already registered.");
-            response.setStatus(HttpServletResponse.SC_CONFLICT);
+            response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED);
         }
 
         if (userPassword != null && userConfirmPassword != null && !userPassword.equals(userConfirmPassword)) {
@@ -118,12 +118,12 @@ public class UserController {
 
         if (checkExistedEmail != null && !checkExistedEmail.getEmail().equals(userTargetEmail)) {
             errors.put("update-email", "This email is already registered.");
-            response.setStatus(HttpServletResponse.SC_CONFLICT);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
 
         if (!userPassword.equals(userConfirmPassword)) {
             errors.put("update-confirmPassword", "Your confirmed password should be identical to your original password.");
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setStatus(HttpServletResponse.SC_HTTP_VERSION_NOT_SUPPORTED);
         }
 
         if (!errors.isEmpty()) {
@@ -140,7 +140,7 @@ public class UserController {
             this.userService.updateUser(userRequest);
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+        return ResponseEntity.status(HttpStatus.CREATED).body(null);
     }
 
     @DeleteMapping("/users-ajax/delete")
@@ -150,7 +150,7 @@ public class UserController {
 
         if (checkExistedEmail == null) {
             errors.put("delete-email", "This email is not existing.");
-            response.setStatus(HttpServletResponse.SC_CONFLICT);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
 
         if (!errors.isEmpty()) {
@@ -161,7 +161,7 @@ public class UserController {
         userRequest.setEmail(email);
         this.userService.deleteUser(userRequest);
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        return ResponseEntity.status(HttpStatus.CREATED).body(null);
     }
 
 }

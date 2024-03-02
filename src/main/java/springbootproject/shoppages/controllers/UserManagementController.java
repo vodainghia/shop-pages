@@ -67,30 +67,30 @@ public class UserManagementController {
         return "redirect:/users?success";
     }
 
-    // @GetMapping("/users/edit/{id}")
-    // public String edit(Model model) {
-    //     return "pages/forms/users/update_users";
-    // }
+     @GetMapping("/users/edit/{id}")
+     public String edit(Model model) {
+         return "pages/forms/users/update_users";
+     }
 
-    // @PostMapping("/users/update")
-    // public String update(
-    //         @Valid @ModelAttribute("user") UserRequest userRequest,
-    //         BindingResult result,
-    //         Model model) {
+     @PostMapping("/users/update")
+     public String update(
+             @Valid @ModelAttribute("user") UserRequest userRequest,
+             BindingResult result,
+             Model model) {
 
-    //     User checkExistedEmail = this.userService.findByEmail(userRequest.getEmail());
+         User checkExistedEmail = this.userService.findByEmail(userRequest.getEmail());
 
-    //     if (checkExistedEmail != null) {
-    //         result.rejectValue("email", "409", "This email is already registed.");
-    //     }
+         if (checkExistedEmail != null) {
+             result.rejectValue("email", "409", "This email is already registed.");
+         }
 
-    //     if (result.hasErrors()) {
-    //         model.addAttribute("user", userRequest);
-    //         return "pages/forms/users/update_users";
-    //     }
+         if (result.hasErrors()) {
+             model.addAttribute("user", userRequest);
+             return "pages/forms/users/update_users";
+         }
 
-    //     this.userService.saveUser(userRequest);
+         this.userService.saveUser(userRequest);
 
-    //     return "redirect:/users?success";
-    // }
+         return "redirect:/users?success";
+     }
 }
