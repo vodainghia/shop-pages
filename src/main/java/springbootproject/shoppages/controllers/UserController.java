@@ -90,14 +90,14 @@ public class UserController {
         }
 
         if (!errors.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(errors);
 
         } else if (bindingResult.hasErrors()) {
             for (FieldError error : bindingResult.getFieldErrors()) {
                 errors.put(error.getField(), error.getDefaultMessage());
             }
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(errors);
 
         } else {
             this.userService.saveUser(userRequest);
@@ -127,14 +127,14 @@ public class UserController {
         }
 
         if (!errors.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errors);
 
         } else if (bindingResult.hasErrors()) {
             for (FieldError error : bindingResult.getFieldErrors()) {
                 errors.put("update-" + error.getField(), error.getDefaultMessage());
             }
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+            return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(errors);
 
         } else {
             this.userService.updateUser(userRequest);
@@ -154,7 +154,7 @@ public class UserController {
         }
 
         if (!errors.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(errors);
         }
 
         UserRequest userRequest = new UserRequest();
